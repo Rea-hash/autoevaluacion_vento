@@ -166,7 +166,7 @@ body{background:linear-gradient(135deg,#001f54,#0057b8);padding:25px;}
 <div class="porcentaje" id="porcentaje">0%</div>
 <div class="total-puntos" style="margin-top:15px;">
 <div class="puntaje" id="puntajeTotal">0</div>
-<div>PUNTOS DE <span id="maxPuntos"></span> POSIBLES</div>
+<div>PUNTOS OBTENIDOS</div>
 </div>
 </div>
 
@@ -273,49 +273,139 @@ body{background:linear-gradient(135deg,#001f54,#0057b8);padding:25px;}
 <script>
 // PUNTAJE MÁXIMO TOTAL
 const PUNTAJE_MAXIMO = 94; // 5+27+19+31+12
-document.getElementById('maxPuntos').innerText = PUNTAJE_MAXIMO;
 
-// Función para calcular puntaje total (CORREGIDA)
+// Función para calcular puntaje total — solo suma "Sí" (valor > 0)
 function calcularPuntaje() {
     let total = 0;
-    // Selecciona todos los radios con clase 'check' que estén marcados y tengan valor numérico
-    const radiosSeleccionados = document.querySelectorAll('.check:checked');
-    radiosSeleccionados.forEach(radio => {
+    // Recorre todos los grupos de radio con clase 'check' o 'checkSondeo'
+    document.querySelectorAll('input[type="radio"].check:checked, input[type="radio"].checkSondeo:checked').forEach(radio => {
         let valor = parseInt(radio.value);
         if (!isNaN(valor) && valor > 0) {
             total += valor;
         }
     });
-    
-    // Caso especial: Sondeo completo
-    const sondeoRadio = document.querySelector('input[name="atenc4"]:checked');
-    if (sondeoRadio && sondeoRadio.value === '7') {
-        // Ya se sumó en el total general, no hacer nada extra
-    } else if (sondeoRadio && sondeoRadio.value === '0') {
-        // No sumar nada
-    }
-    
     document.getElementById('puntajeTotal').innerText = total;
     return total;
 }
 
-// Función para actualizar barra de progreso
+// Función para actualizar barra de progreso (cuenta cualquier respuesta, Sí o No)
 function actualizarProgreso() {
-    const totalRadios = document.querySelectorAll('.check').length;
-    let radiosRespondidos = 0;
     const gruposRadio = new Set();
-    
-    // Contar grupos de radio que tienen al menos una opción seleccionada
-    document.querySelectorAll('.check').forEach(radio => {
-        const name = radio.getAttribute('name');
-        if (name && !gruposRadio.has(name)) {
-            gruposRadio.add(name);
-            const seleccionado = document.querySelector(`input[name="${name}"]:checked`);
-            if (seleccionado) {
-                radiosRespondidos++;
-            }
+    document.querySelectorAll('input[type="radio"].check, input[type="radio"].checkSondeo').forEach(radio => {
+        gruposRadio.add(radio.getAttribute('name'));
+    });
+
+    let radiosRespondidos = 0;
+    gruposRadio.forEach(name => {
+        if (document.querySelector(`input[name="${name}"]:checked`)) {
+            radiosRespondidos++;
         }
     });
-    
-    const avance = (radiosRespondidos / gruposRadio.size) * 100;
-    document.getElementById('barra').style.width = av
+
+    const avance = gruposRadio.size > 0 ? (radiosRespondidos / gruposRadio.size) * 100 : 0;
+    document.getElementById('barra').style.width = avance + '%';
+    document.getElementById('porcentaje').innerText = Math.round(avance) + '%';
+    calcularPuntaje();
+}
+
+// Escuchar cambios en todos los radios
+document.querySelectorAll('input[type="radio"].check, input[type="radio"].checkSondeo').forEach(radio => {
+    radio.addEventListener('change', actualizarProgreso);
+});
+
+// ── EXPORTAR Y GUARDAR EN DRIVE ──────────────────────────────────────────────
+async function guardarEnDrive() {
+    const btn = document.getElementById('btnGuardar');
+    const agencia = document.getElementById('agencia').value;
+    const nombre = document.getElementById('nombre').value;
+    const fecha = document.getElementById('fecha').value;
+
+    if (!agencia || !nombre || !fecha) {
+        mostrarMensaje('⚠️ Complete Agencia, Nombre y Fecha antes de guardar.', 'error');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span> Generando PDF...';
+
+    try {
+        // Ocultar botón durante la captura
+        btn.style.display = 'none';
+
+        const filename = `Autoevaluacion_${agencia.replace(/\s+/g,'_')}_${nombre.replace(/\s+/g,'_')}_${fecha}.pdf`;
+
+        const opt = {
+            margin:       [10, 10, 10, 10],
+            filename:     filename,
+            image:        { type: 'jpeg', quality: 0.95 },
+            html2canvas:  { scale: 2, useCORS: true, logging: false, scrollY: 0 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Generar PDF como blob
+        const pdfBlob = await html2pdf().set(opt).from(document.getElementById('contenidoPDF')).outputPdf('blob');
+
+        btn.style.display = '';
+        btn.innerHTML = '<span class="loader"></span> Subiendo a Drive...';
+
+        // Subir a Google Drive via Apps Script Web App
+        const DRIVE_SCRIPT_URL = 'TU_APPS_SCRIPT_URL_AQUI'; // ← reemplaza con tu URL
+
+        // Convertir blob a base64
+        const base64 = await blobToBase64(pdfBlob);
+
+        const response = await fetch(DRIVE_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                filename: filename,
+                mimeType: 'application/pdf',
+                data: base64,
+                folderId: 'TU_FOLDER_ID_AQUI' // ← reemplaza con el ID de tu carpeta en Drive
+            })
+        });
+
+        if (!response.ok) throw new Error('Error al subir a Drive');
+
+        const result = await response.json();
+        mostrarMensaje('✅ Guardado en Drive correctamente: ' + filename, 'exito');
+
+    } catch (err) {
+        console.error(err);
+        // Si falla la subida, al menos descargamos localmente
+        const filename = `Autoevaluacion_${agencia.replace(/\s+/g,'_')}_${nombre.replace(/\s+/g,'_')}_${fecha}.pdf`;
+        const opt = {
+            margin:       [10, 10, 10, 10],
+            filename:     filename,
+            image:        { type: 'jpeg', quality: 0.95 },
+            html2canvas:  { scale: 2, useCORS: true, logging: false, scrollY: 0 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        await html2pdf().set(opt).from(document.getElementById('contenidoPDF')).save();
+        mostrarMensaje('⚠️ Drive no configurado — PDF descargado localmente.', 'info');
+    } finally {
+        btn.style.display = '';
+        btn.disabled = false;
+        btn.innerHTML = '💾 GUARDAR EN DRIVE';
+    }
+}
+
+function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+}
+
+function mostrarMensaje(texto, tipo) {
+    const div = document.createElement('div');
+    div.className = `mensaje mensaje-${tipo}`;
+    div.innerText = texto;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 4000);
+}
+</script>
+</body>
+</html>
