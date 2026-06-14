@@ -382,7 +382,7 @@ async function guardarEnDrive() {
         formData.append('puesto', puesto);
         formData.append('puntaje', calcularPuntaje());
         
-        const response = await fetch('URL_DE_TU_GOOGLE_APPS_SCRIPT', {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbxZD29vpQWNvasi9GAf-WYXODA5IlCjmC6-SLLNEaQ4OMKCO4nQsMB0d72zQ1sVpKZJew/exec', {
             method: 'POST',
             body: formData
         });
