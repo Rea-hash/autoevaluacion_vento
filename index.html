@@ -349,7 +349,7 @@ async function guardarEnDrive() {
         btn.innerHTML = '<span class="loader"></span> Subiendo a Drive...';
 
         // Subir a Google Drive via Apps Script Web App
-        const DRIVE_SCRIPT_URL = 'TU_APPS_SCRIPT_URL_AQUI'; // ← reemplaza con tu URL
+        const DRIVE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZD29vpQWNvasi9GAf-WYXODA5IlCjmC6-SLLNEaQ4OMKCO4nQsMB0d72zQ1sVpKZJew/exec'; // ← reemplaza con tu URL
 
         // Convertir blob a base64
         const base64 = await blobToBase64(pdfBlob);
@@ -361,7 +361,7 @@ async function guardarEnDrive() {
                 filename: filename,
                 mimeType: 'application/pdf',
                 data: base64,
-                folderId: 'TU_FOLDER_ID_AQUI' // ← reemplaza con el ID de tu carpeta en Drive
+                folderId: '1K_p_tcmQpBImY0EwEEKLBkMn-PdZ0o1R' // ← reemplaza con el ID de tu carpeta en Drive
             })
         });
 
