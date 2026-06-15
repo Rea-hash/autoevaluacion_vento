@@ -23,157 +23,176 @@ body{background:linear-gradient(135deg,#001f54,#0057b8);padding:25px;}
 .tabla-evaluacion td{padding:12px;border-bottom:1px solid #e0e0e0;vertical-align:top;}
 .tabla-evaluacion tr:hover{background:#f8f9ff;}
 .ejemplo{color:#666;font-size:12px;margin-top:5px;font-style:italic;}
-.puntaje-bloque{background:#f0f7ff;padding:15px;border-radius:10px;margin-top:15px;text-align:center;}
-.puntaje-bloque h3{color:#0057b8;}
 .radio-group{display:flex;gap:15px;align-items:center;}
 .radio-group label{display:flex;align-items:center;gap:5px;cursor:pointer;}
 .progreso{position:sticky;top:10px;z-index:999;background:white;padding:20px;border-radius:15px;margin-bottom:25px;box-shadow:0 5px 15px rgba(0,0,0,.1);}
 .progress-bar{height:30px;background:#e0e0e0;border-radius:20px;overflow:hidden;}
 .progress{height:100%;width:0%;background:linear-gradient(90deg,#00b894,#00d084);transition:width 0.3s;}
 .porcentaje{text-align:center;margin-top:10px;font-weight:bold;color:#0057b8;font-size:20px;}
-.btn-guardar{background:linear-gradient(135deg,#00b894,#00d084);color:white;border:none;padding:18px 40px;border-radius:50px;font-size:18px;font-weight:bold;cursor:pointer;width:100%;transition:transform 0.2s,box-shadow 0.2s;}
+.btn-guardar{background:linear-gradient(135deg,#0057b8,#00b894);color:white;border:none;padding:18px 40px;border-radius:50px;font-size:18px;font-weight:bold;cursor:pointer;width:100%;transition:transform 0.2s,box-shadow 0.2s;}
 .btn-guardar:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(0,0,0,0.2);}
 .total-puntos{background:linear-gradient(135deg,#0057b8,#00b894);color:white;padding:20px;border-radius:15px;text-align:center;margin:20px 0;}
 .total-puntos .puntaje{font-size:48px;font-weight:bold;}
-.firmas{background:white;margin-top:25px;border-radius:18px;padding:30px;box-shadow:0 5px 15px rgba(0,0,0,.15);}
-.firma-contenedor{display:flex;justify-content:space-between;gap:50px;flex-wrap:wrap;}
-.firma{flex:1;text-align:center;}
-.linea-firma{border-top:2px solid #000;margin-top:40px;margin-bottom:10px;}
-.mensaje{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:8px;color:white;font-weight:bold;z-index:1000;animation:slideIn 0.3s ease-out;box-shadow:0 5px 15px rgba(0,0,0,.2);}
+.badge{display:inline-block;background:#f0f7ff;color:#0057b8;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:bold;margin-left:8px;}
+.loader{display:inline-block;width:20px;height:20px;border:3px solid white;border-radius:50%;border-top-color:transparent;animation:spin 1s linear infinite;margin-right:10px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.mensaje{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:8px;color:white;font-weight:bold;z-index:9999;animation:slideIn 0.3s ease-out;box-shadow:0 5px 15px rgba(0,0,0,.2);max-width:320px;}
 .mensaje-exito{background:#00b894;}
 .mensaje-error{background:#e74c3c;}
 .mensaje-info{background:#3498db;}
 @keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
-.badge{display:inline-block;background:#f0f7ff;color:#0057b8;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:bold;margin-left:8px;}
-.loader{display:inline-block;width:20px;height:20px;border:3px solid white;border-radius:50%;border-top-color:transparent;animation:spin 1s linear infinite;margin-right:10px;vertical-align:middle;}
-@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── FIRMAS TOUCH ──────────────────────────────────────────────────────── */
+.firmas-section{background:white;margin-bottom:20px;border-radius:18px;padding:25px;box-shadow:0 5px 15px rgba(0,0,0,.15);}
+.firmas-section h2{color:#0057b8;margin-bottom:20px;border-left:5px solid #0057b8;padding-left:15px;}
+.firma-contenedor{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;}
+.firma-bloque{flex:1;min-width:280px;text-align:center;}
+.firma-bloque strong{display:block;margin-bottom:10px;color:#333;font-size:15px;}
+.firma-nombre{width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;margin-bottom:12px;}
+.canvas-firma{
+  border:2px dashed #0057b8;
+  border-radius:12px;
+  background:#f8f9ff;
+  cursor:crosshair;
+  display:block;
+  width:100%;
+  height:160px;
+  touch-action:none;
+}
+.canvas-firma:active{background:#eef4ff;}
+.btn-limpiar{margin-top:8px;background:#e74c3c;color:white;border:none;padding:7px 18px;border-radius:20px;font-size:13px;cursor:pointer;transition:background 0.2s;}
+.btn-limpiar:hover{background:#c0392b;}
+.firma-hint{font-size:11px;color:#999;margin-top:6px;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 <div class="container" id="contenidoPDF">
+
 <div class="header">
-<h1>🏍️ AUTOEVALUACIÓN DE CALIDAD VENTO 2026</h1>
-<p>Manual de Ventas 2.0 + Guía de Calidad - Role Play</p>
+  <h1>🏍️ AUTOEVALUACIÓN DE CALIDAD VENTO 2026</h1>
+  <p>Manual de Ventas 2.0 + Guía de Calidad - Role Play</p>
 </div>
 
+<!-- DATOS GENERALES -->
 <div class="card">
 <h2>📋 DATOS GENERALES</h2>
 <div class="row">
 <div class="form-group">
-<label><strong>🏢 Agencia:</strong></label>
-<select id="agencia" class="select-moderno" required>
-<option value="">Seleccione una agencia...</option>
-<option value="07 Nezahualcóyotl">07 Nezahualcóyotl</option>
-<option value="08 Chimalhuacán">08 Chimalhuacán</option>
-<option value="112 Neza-Raúl Romero">112 Neza-Raúl Romero</option>
-<option value="113 Maravillas">113 Maravillas</option>
-<option value="137 Peñon">137 Peñon</option>
-<option value="166 Los Reyes la Paz">166 Los Reyes la Paz</option>
-<option value="40 Nezahualcoyotl Oriente">40 Nezahualcoyotl Oriente</option>
-<option value="57 Chicoloapan">57 Chicoloapan</option>
-<option value="162 Chiconcuac">162 Chiconcuac</option>
-<option value="24 Texcoco">24 Texcoco</option>
-<option value="02 Insurgentes">02 Insurgentes</option>
-<option value="03 Condesa">03 Condesa</option>
-<option value="04 San Angel">04 San Angel</option>
-<option value="107 Vasco de Quiroga">107 Vasco de Quiroga</option>
-<option value="129 San Bernabe">129 San Bernabe</option>
-<option value="13 La Villa">13 La Villa</option>
-<option value="29 Oceania">29 Oceania</option>
-<option value="82 Insurgentes Sur">82 Insurgentes Sur</option>
-<option value="19001 POLANCO CMX">19001 POLANCO CMX</option>
-<option value="19003 INSURGENTES CMX">19003 INSURGENTES CMX</option>
-<option value="151 Casas Alemán">151 Casas Alemán</option>
-<option value="235 Portal Centenario">235 Portal Centenario</option>
-<option value="268 Picacho Ajusco">268 Picacho Ajusco</option>
-<option value="103 Cuernavaca Sur">103 Cuernavaca Sur</option>
-<option value="106 Emiliano Zapata">106 Emiliano Zapata</option>
-<option value="124 Puente de Ixtla">124 Puente de Ixtla</option>
-<option value="17 Cuautla">17 Cuautla</option>
-<option value="173 Temixco">173 Temixco</option>
-<option value="18 Cuernavaca">18 Cuernavaca</option>
-<option value="202 Axochiapan">202 Axochiapan</option>
-<option value="34 Yautepec">34 Yautepec</option>
-<option value="44 Jiutepec Morelos">44 Jiutepec Morelos</option>
-<option value="95 Jojutla">95 Jojutla</option>
-<option value="283 Yecapixtla">283 Yecapixtla</option>
-<option value="248 Emiliano Zapata Centro">248 Emiliano Zapata Centro</option>
-<option value="128 Ayotla">128 Ayotla</option>
-<option value="185 Ixtapaluca">185 Ixtapaluca</option>
-<option value="121 Chalco-Cuautzingo">121 Chalco-Cuautzingo</option>
-<option value="123 Chalco-Mixquic">123 Chalco-Mixquic</option>
-<option value="147 Chalco-Solidaridad">147 Chalco-Solidaridad</option>
-<option value="177 Amecameca">177 Amecameca</option>
-<option value="205 Valle de Chalco Tezozómoc">205 Valle de Chalco Tezozómoc</option>
-<option value="22 Valle de Chalco">22 Valle de Chalco</option>
-<option value="25 Chalco">25 Chalco</option>
-<option value="06 Ecatepec">06 Ecatepec</option>
-<option value="297 San Antonio Tecomitl">297 San Antonio Tecomitl</option>
-<option value="156 San Andres Totoltepec">156 San Andres Totoltepec</option>
-<option value="67 Xochimilco">67 Xochimilco</option>
-<option value="01 Rojo Gomez">01 Rojo Gomez</option>
-<option value="14 Tláhuac">14 Tláhuac</option>
-<option value="161 Santa Cecilia">161 Santa Cecilia</option>
-<option value="23 Acatitla">23 Acatitla</option>
-<option value="56 La Pastora">56 La Pastora</option>
-<option value="65 Ermita">65 Ermita</option>
-<option value="75 Ermita Santa Cruz">75 Ermita Santa Cruz</option>
-<option value="83 Centenario">83 Centenario</option>
-<option value="288 Motul">288 Motul</option>
-<option value="279 Playa del Carmen">279 Playa del Carmen</option>
-<option value="244 Campeche Centro">244 Campeche Centro</option>
-<option value="275 Chetumal">275 Chetumal</option>
-<option value="243 Champoton">243 Champoton</option>
-<option value="110 Acapulco Centro">110 Acapulco Centro</option>
-<option value="104 Acapulco Cuauhtemoc">104 Acapulco Cuauhtemoc</option>
-<option value="119 Patio Acapulco">119 Patio Acapulco</option>
-<option value="127 Pie de la Cuesta">127 Pie de la Cuesta</option>
-<option value="142 Iguala">142 Iguala</option>
-<option value="157 Taxco">157 Taxco</option>
-<option value="211 Acapulco Renacimiento">211 Acapulco Renacimiento</option>
-<option value="233 Chilpancingo Centro">233 Chilpancingo Centro</option>
-<option value="232 Chilpancingo Sur">232 Chilpancingo Sur</option>
-<option value="231 Chilapa Guerrero">231 Chilapa Guerrero</option>
-<option value="271 Tecpan">271 Tecpan</option>
-<option value="277 Atoyac">277 Atoyac</option>
-<option value="286 Teloloapan">286 Teloloapan</option>
-</select>
+  <label><strong>🏢 Agencia:</strong></label>
+  <select id="agencia" class="select-moderno" required>
+    <option value="">Seleccione una agencia...</option>
+    <option value="07 Nezahualcóyotl">07 Nezahualcóyotl</option>
+    <option value="08 Chimalhuacán">08 Chimalhuacán</option>
+    <option value="112 Neza-Raúl Romero">112 Neza-Raúl Romero</option>
+    <option value="113 Maravillas">113 Maravillas</option>
+    <option value="137 Peñon">137 Peñon</option>
+    <option value="166 Los Reyes la Paz">166 Los Reyes la Paz</option>
+    <option value="40 Nezahualcoyotl Oriente">40 Nezahualcoyotl Oriente</option>
+    <option value="57 Chicoloapan">57 Chicoloapan</option>
+    <option value="162 Chiconcuac">162 Chiconcuac</option>
+    <option value="24 Texcoco">24 Texcoco</option>
+    <option value="02 Insurgentes">02 Insurgentes</option>
+    <option value="03 Condesa">03 Condesa</option>
+    <option value="04 San Angel">04 San Angel</option>
+    <option value="107 Vasco de Quiroga">107 Vasco de Quiroga</option>
+    <option value="129 San Bernabe">129 San Bernabe</option>
+    <option value="13 La Villa">13 La Villa</option>
+    <option value="29 Oceania">29 Oceania</option>
+    <option value="82 Insurgentes Sur">82 Insurgentes Sur</option>
+    <option value="19001 POLANCO CMX">19001 POLANCO CMX</option>
+    <option value="19003 INSURGENTES CMX">19003 INSURGENTES CMX</option>
+    <option value="151 Casas Alemán">151 Casas Alemán</option>
+    <option value="235 Portal Centenario">235 Portal Centenario</option>
+    <option value="268 Picacho Ajusco">268 Picacho Ajusco</option>
+    <option value="103 Cuernavaca Sur">103 Cuernavaca Sur</option>
+    <option value="106 Emiliano Zapata">106 Emiliano Zapata</option>
+    <option value="124 Puente de Ixtla">124 Puente de Ixtla</option>
+    <option value="17 Cuautla">17 Cuautla</option>
+    <option value="173 Temixco">173 Temixco</option>
+    <option value="18 Cuernavaca">18 Cuernavaca</option>
+    <option value="202 Axochiapan">202 Axochiapan</option>
+    <option value="34 Yautepec">34 Yautepec</option>
+    <option value="44 Jiutepec Morelos">44 Jiutepec Morelos</option>
+    <option value="95 Jojutla">95 Jojutla</option>
+    <option value="283 Yecapixtla">283 Yecapixtla</option>
+    <option value="248 Emiliano Zapata Centro">248 Emiliano Zapata Centro</option>
+    <option value="128 Ayotla">128 Ayotla</option>
+    <option value="185 Ixtapaluca">185 Ixtapaluca</option>
+    <option value="121 Chalco-Cuautzingo">121 Chalco-Cuautzingo</option>
+    <option value="123 Chalco-Mixquic">123 Chalco-Mixquic</option>
+    <option value="147 Chalco-Solidaridad">147 Chalco-Solidaridad</option>
+    <option value="177 Amecameca">177 Amecameca</option>
+    <option value="205 Valle de Chalco Tezozómoc">205 Valle de Chalco Tezozómoc</option>
+    <option value="22 Valle de Chalco">22 Valle de Chalco</option>
+    <option value="25 Chalco">25 Chalco</option>
+    <option value="06 Ecatepec">06 Ecatepec</option>
+    <option value="297 San Antonio Tecomitl">297 San Antonio Tecomitl</option>
+    <option value="156 San Andres Totoltepec">156 San Andres Totoltepec</option>
+    <option value="67 Xochimilco">67 Xochimilco</option>
+    <option value="01 Rojo Gomez">01 Rojo Gomez</option>
+    <option value="14 Tláhuac">14 Tláhuac</option>
+    <option value="161 Santa Cecilia">161 Santa Cecilia</option>
+    <option value="23 Acatitla">23 Acatitla</option>
+    <option value="56 La Pastora">56 La Pastora</option>
+    <option value="65 Ermita">65 Ermita</option>
+    <option value="75 Ermita Santa Cruz">75 Ermita Santa Cruz</option>
+    <option value="83 Centenario">83 Centenario</option>
+    <option value="288 Motul">288 Motul</option>
+    <option value="279 Playa del Carmen">279 Playa del Carmen</option>
+    <option value="244 Campeche Centro">244 Campeche Centro</option>
+    <option value="275 Chetumal">275 Chetumal</option>
+    <option value="243 Champoton">243 Champoton</option>
+    <option value="110 Acapulco Centro">110 Acapulco Centro</option>
+    <option value="104 Acapulco Cuauhtemoc">104 Acapulco Cuauhtemoc</option>
+    <option value="119 Patio Acapulco">119 Patio Acapulco</option>
+    <option value="127 Pie de la Cuesta">127 Pie de la Cuesta</option>
+    <option value="142 Iguala">142 Iguala</option>
+    <option value="157 Taxco">157 Taxco</option>
+    <option value="211 Acapulco Renacimiento">211 Acapulco Renacimiento</option>
+    <option value="233 Chilpancingo Centro">233 Chilpancingo Centro</option>
+    <option value="232 Chilpancingo Sur">232 Chilpancingo Sur</option>
+    <option value="231 Chilapa Guerrero">231 Chilapa Guerrero</option>
+    <option value="271 Tecpan">271 Tecpan</option>
+    <option value="277 Atoyac">277 Atoyac</option>
+    <option value="286 Teloloapan">286 Teloloapan</option>
+  </select>
 </div>
 <div class="form-group">
-<label><strong>👤 Nombre del Evaluado:</strong></label>
-<input type="text" id="nombre" class="campo-texto" placeholder="Nombre completo del asesor">
+  <label><strong>👤 Nombre del Evaluado:</strong></label>
+  <input type="text" id="nombre" class="campo-texto" placeholder="Nombre completo del asesor">
 </div>
 <div class="form-group">
-<label><strong>💼 Puesto:</strong></label>
-<select id="puesto" class="select-moderno" required>
-<option value="">Seleccione un puesto...</option>
-<option value="Gerente">Gerente</option>
-<option value="Subgerente">Subgerente</option>
-<option value="Asesor">Asesor</option>
-</select>
+  <label><strong>💼 Puesto:</strong></label>
+  <select id="puesto" class="select-moderno" required>
+    <option value="">Seleccione un puesto...</option>
+    <option value="Gerente">Gerente</option>
+    <option value="Subgerente">Subgerente</option>
+    <option value="Asesor">Asesor</option>
+  </select>
 </div>
 <div class="form-group">
-<label><strong>📅 Fecha:</strong></label>
-<input type="date" id="fecha" class="campo-texto">
+  <label><strong>📅 Fecha:</strong></label>
+  <input type="date" id="fecha" class="campo-texto">
 </div>
 </div>
 </div>
 
+<!-- PROGRESO -->
 <div class="progreso">
-<h3>📊 Avance de Evaluación</h3>
-<div class="progress-bar"><div class="progress" id="barra"></div></div>
-<div class="porcentaje" id="porcentaje">0%</div>
-<div class="total-puntos" style="margin-top:15px;">
-<div class="puntaje" id="puntajeTotal">0</div>
-<div>PUNTOS OBTENIDOS</div>
-</div>
+  <h3>📊 Avance de Evaluación</h3>
+  <div class="progress-bar"><div class="progress" id="barra"></div></div>
+  <div class="porcentaje" id="porcentaje">0%</div>
+  <div class="total-puntos" style="margin-top:15px;">
+    <div class="puntaje" id="puntajeTotal">0</div>
+    <div>PUNTOS OBTENIDOS</div>
+  </div>
 </div>
 
 <!-- PROTOCOLO DE BIENVENIDA -->
 <div class="card">
 <h2>👋 PROTOCOLO DE BIENVENIDA <span class="badge">Total: 5 pts</span></h2>
-<table class="tabla-evaluacion" id="tablaBienvenida">
+<table class="tabla-evaluacion">
 <thead><tr><th>Criterio</th><th>Ejemplo</th><th>Pts</th><th>Cumple</th></tr></thead>
 <tbody>
 <tr><td>¿Utiliza el Script de Bienvenida?</td><td class="ejemplo">"Buenos días, bienvenido a Vento, mi nombre es..."</td><td>1</td><td class="radio-group"><label><input type="radio" name="bienv1" value="1" class="check"> Sí</label><label><input type="radio" name="bienv1" value="0" class="check"> No</label></td></tr>
@@ -202,7 +221,7 @@ body{background:linear-gradient(135deg,#001f54,#0057b8);padding:25px;}
 </table>
 </div>
 
-<!-- BENEFICIOS Y OPCIONES DE COMPRA -->
+<!-- BENEFICIOS -->
 <div class="card">
 <h2>💰 BENEFICIOS Y OPCIONES DE COMPRA <span class="badge">Total: 19 pts</span></h2>
 <table class="tabla-evaluacion">
@@ -253,45 +272,63 @@ body{background:linear-gradient(135deg,#001f54,#0057b8);padding:25px;}
 </table>
 </div>
 
+<!-- COMPROMISO -->
 <div class="card">
 <h2>📝 COMPROMISO Y PLAN DE ACCIÓN</h2>
 <textarea id="compromiso" rows="4" class="campo-texto" placeholder="Escriba aquí los planes de acción, compromisos acordados y fechas de seguimiento..."></textarea>
 </div>
 
-<div class="firmas">
-<div class="firma-contenedor">
-<div class="firma"><div class="linea-firma"></div><strong>FIRMA DEL EVALUADOR</strong><br><input type="text" class="campo-texto" id="firmaEvaluador" placeholder="Nombre del evaluador" style="margin-top:10px;"></div>
-<div class="firma"><div class="linea-firma"></div><strong>FIRMA DEL EVALUADO</strong><br><input type="text" class="campo-texto" id="firmaEvaluado" placeholder="Nombre del evaluado" style="margin-top:10px;"></div>
-</div>
-</div>
+<!-- FIRMAS TOUCH -->
+<div class="firmas-section">
+  <h2>✍️ FIRMAS</h2>
+  <div class="firma-contenedor">
+
+    <div class="firma-bloque">
+      <strong>FIRMA DEL EVALUADOR</strong>
+      <input type="text" id="nombreEvaluador" class="firma-nombre campo-texto" placeholder="Nombre del evaluador">
+      <canvas id="canvasEvaluador" class="canvas-firma" width="600" height="160"></canvas>
+      <button class="btn-limpiar" onclick="limpiarCanvas('canvasEvaluador')">🗑️ Limpiar firma</button>
+      <p class="firma-hint">Firme con el dedo o el mouse en el recuadro azul</p>
+    </div>
+
+    <div class="firma-bloque">
+      <strong>FIRMA DEL EVALUADO</strong>
+      <input type="text" id="nombreEvaluado" class="firma-nombre campo-texto" placeholder="Nombre del evaluado">
+      <canvas id="canvasEvaluado" class="canvas-firma" width="600" height="160"></canvas>
+      <button class="btn-limpiar" onclick="limpiarCanvas('canvasEvaluado')">🗑️ Limpiar firma</button>
+      <p class="firma-hint">Firme con el dedo o el mouse en el recuadro azul</p>
+    </div>
+
+  </div>
 </div>
 
-<div style="text-align:center;margin-top:25px;margin-bottom:30px;">
-<button class="btn-guardar" id="btnGuardar" onclick="guardarEnDrive()">💾 GUARDAR EN DRIVE</button>
+</div><!-- fin contenidoPDF -->
+
+<div style="text-align:center;margin-top:25px;margin-bottom:30px;" id="seccionBoton">
+  <button class="btn-guardar" id="btnGuardar" onclick="guardarEnTelegram()">📤 GUARDAR Y ENVIAR</button>
 </div>
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
-const DRIVE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzm_u641DlUw1eOGPv6tth8tEFn-YFALPFAKDEjCrgOa5Zj1MLGBOLzNbedQ1g8hq7MFw/exec';
-const FOLDER_ID        = '1K_p_tcmQpBImY0EwEEKLBkMn-PdZ0o1R';
+const TELEGRAM_TOKEN   = '8951002528:AAGT9zPkxabEgE8mZ6O1Gj_a09satq0unHM';   // ← reemplaza
+const TELEGRAM_CHAT_ID = '8791596157';     // ← reemplaza
 
 // ── PUNTAJE ───────────────────────────────────────────────────────────────────
 function calcularPuntaje() {
     let total = 0;
-    document.querySelectorAll('input[type="radio"].check:checked, input[type="radio"].checkSondeo:checked').forEach(radio => {
-        const val = parseInt(radio.value);
-        if (!isNaN(val) && val > 0) total += val;
+    document.querySelectorAll('input[type="radio"].check:checked, input[type="radio"].checkSondeo:checked').forEach(r => {
+        const v = parseInt(r.value);
+        if (!isNaN(v) && v > 0) total += v;
     });
     document.getElementById('puntajeTotal').innerText = total;
     return total;
 }
 
-// ── PROGRESO ──────────────────────────────────────────────────────────────────
 function actualizarProgreso() {
     const grupos = new Set();
     document.querySelectorAll('input[type="radio"].check, input[type="radio"].checkSondeo').forEach(r => grupos.add(r.name));
     let respondidos = 0;
-    grupos.forEach(name => { if (document.querySelector(`input[name="${name}"]:checked`)) respondidos++; });
+    grupos.forEach(n => { if (document.querySelector(`input[name="${n}"]:checked`)) respondidos++; });
     const pct = grupos.size > 0 ? (respondidos / grupos.size) * 100 : 0;
     document.getElementById('barra').style.width = pct + '%';
     document.getElementById('porcentaje').innerText = Math.round(pct) + '%';
@@ -299,16 +336,76 @@ function actualizarProgreso() {
 }
 document.querySelectorAll('input[type="radio"].check, input[type="radio"].checkSondeo').forEach(r => r.addEventListener('change', actualizarProgreso));
 
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function blobToBase64(blob) {
-    return new Promise((res, rej) => {
-        const reader = new FileReader();
-        reader.onloadend = () => res(reader.result.split(',')[1]);
-        reader.onerror = rej;
-        reader.readAsDataURL(blob);
+// ── FIRMA TOUCH ───────────────────────────────────────────────────────────────
+function iniciarFirma(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    const ctx    = canvas.getContext('2d');
+    let dibujando = false;
+
+    function getPosicion(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width  / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const src = e.touches ? e.touches[0] : e;
+        return {
+            x: (src.clientX - rect.left) * scaleX,
+            y: (src.clientY - rect.top)  * scaleY
+        };
+    }
+
+    function iniciar(e) {
+        e.preventDefault();
+        dibujando = true;
+        const pos = getPosicion(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        ctx.strokeStyle = '#1a237e';
+        ctx.lineWidth   = 2.5;
+        ctx.lineCap     = 'round';
+        ctx.lineJoin    = 'round';
+    }
+
+    function dibujar(e) {
+        e.preventDefault();
+        if (!dibujando) return;
+        const pos = getPosicion(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+    }
+
+    function terminar(e) { e.preventDefault(); dibujando = false; }
+
+    // Mouse
+    canvas.addEventListener('mousedown',  iniciar);
+    canvas.addEventListener('mousemove',  dibujar);
+    canvas.addEventListener('mouseup',    terminar);
+    canvas.addEventListener('mouseleave', terminar);
+    // Touch
+    canvas.addEventListener('touchstart', iniciar,   { passive: false });
+    canvas.addEventListener('touchmove',  dibujar,   { passive: false });
+    canvas.addEventListener('touchend',   terminar,  { passive: false });
+}
+
+function limpiarCanvas(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// Inicializar ambos canvas
+iniciarFirma('canvasEvaluador');
+iniciarFirma('canvasEvaluado');
+
+// ── INCRUSTAR FIRMAS EN PDF ───────────────────────────────────────────────────
+// Convierte canvas a <img> visible en el PDF antes de capturar
+function incrustarFirmas() {
+    ['Evaluador','Evaluado'].forEach(rol => {
+        const canvas = document.getElementById('canvas' + rol);
+        const img    = document.getElementById('imgFirma' + rol);
+        if (img) img.src = canvas.toDataURL('image/png');
     });
 }
 
+// ── HELPERS ───────────────────────────────────────────────────────────────────
 function mostrarMensaje(texto, tipo) {
     const div = document.createElement('div');
     div.className = `mensaje mensaje-${tipo}`;
@@ -317,53 +414,18 @@ function mostrarMensaje(texto, tipo) {
     setTimeout(() => div.remove(), 5000);
 }
 
-function setBtn(texto, disabled) {
-    const btn = document.getElementById('btnGuardar');
-    btn.innerHTML = texto;
-    btn.disabled = disabled;
+function setBtn(html, disabled) {
+    const b = document.getElementById('btnGuardar');
+    b.innerHTML  = html;
+    b.disabled   = disabled;
 }
 
-// ── GENERAR PDF (blob) ────────────────────────────────────────────────────────
-async function generarPDFBlob(filename) {
-    const opt = {
-        margin:      [8, 8, 8, 8],
-        filename:    filename,
-        image:       { type: 'jpeg', quality: 0.92 },
-        html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
-        jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    return html2pdf().set(opt).from(document.getElementById('contenidoPDF')).outputPdf('blob');
-}
-
-// ── SUBIR A DRIVE vía formulario (evita bloqueo CORS preflight) ──────────────
-function subirViaDrive(base64data, filename) {
-    return new Promise((resolve, reject) => {
-        // Usamos fetch con mode:'no-cors' + text/plain para evitar preflight
-        // Apps Script responde igual; no podemos leer la respuesta con no-cors,
-        // así que asumimos éxito si no hay error de red.
-        const payload = JSON.stringify({
-            filename: filename,
-            mimeType: 'application/pdf',
-            data:     base64data,
-            folderId: FOLDER_ID
-        });
-
-        fetch(DRIVE_SCRIPT_URL, {
-            method:  'POST',
-            mode:    'no-cors',          // ← clave: evita el preflight OPTIONS
-            headers: { 'Content-Type': 'text/plain' },
-            body:    payload
-        })
-        .then(() => resolve({ success: true }))
-        .catch(err => reject(err));
-    });
-}
-
-// ── GUARDAR EN DRIVE ──────────────────────────────────────────────────────────
-async function guardarEnDrive() {
+// ── GUARDAR Y ENVIAR A TELEGRAM ───────────────────────────────────────────────
+async function guardarEnTelegram() {
     const agencia = document.getElementById('agencia').value;
     const nombre  = document.getElementById('nombre').value;
     const fecha   = document.getElementById('fecha').value;
+    const puntos  = document.getElementById('puntajeTotal').innerText;
 
     if (!agencia || !nombre || !fecha) {
         mostrarMensaje('⚠️ Complete Agencia, Nombre y Fecha antes de guardar.', 'error');
@@ -371,31 +433,80 @@ async function guardarEnDrive() {
     }
 
     const filename = `Autoevaluacion_${agencia.replace(/\s+/g,'_')}_${nombre.replace(/\s+/g,'_')}_${fecha}.pdf`;
-    const btn = document.getElementById('btnGuardar');
 
     try {
-        // 1. Ocultar botón para que no aparezca en el PDF
-        btn.style.visibility = 'hidden';
+        // 1. Ocultar botón para que no salga en el PDF
+        document.getElementById('seccionBoton').style.visibility = 'hidden';
+        // Ocultar botones de limpiar y hints también
+        document.querySelectorAll('.btn-limpiar, .firma-hint').forEach(el => el.style.display = 'none');
         setBtn('<span class="loader"></span> Generando PDF...', true);
 
-        const pdfBlob = await generarPDFBlob(filename);
+        // 2. Reemplazar canvas por imágenes estáticas para el PDF
+        ['Evaluador','Evaluado'].forEach(rol => {
+            const canvas = document.getElementById('canvas' + rol);
+            const dataURL = canvas.toDataURL('image/png');
+            // Crear img temporal sobre el canvas
+            const img = document.createElement('img');
+            img.id = 'imgFirma' + rol;
+            img.src = dataURL;
+            img.style.cssText = `width:100%;height:160px;object-fit:contain;border:2px dashed #0057b8;border-radius:12px;background:#f8f9ff;display:block;`;
+            canvas.style.display = 'none';
+            canvas.parentNode.insertBefore(img, canvas);
+        });
 
-        btn.style.visibility = 'visible';
-        setBtn('<span class="loader"></span> Subiendo a Drive...', true);
+        // 3. Generar PDF
+        const opt = {
+            margin:      [8, 8, 8, 8],
+            filename:    filename,
+            image:       { type: 'jpeg', quality: 0.92 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
+            jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        const pdfBlob = await html2pdf().set(opt).from(document.getElementById('contenidoPDF')).outputPdf('blob');
 
-        // 2. Convertir a base64
-        const base64 = await blobToBase64(pdfBlob);
+        // 4. Restaurar canvas
+        ['Evaluador','Evaluado'].forEach(rol => {
+            const img    = document.getElementById('imgFirma' + rol);
+            const canvas = document.getElementById('canvas' + rol);
+            if (img) img.remove();
+            canvas.style.display = 'block';
+        });
+        document.querySelectorAll('.btn-limpiar, .firma-hint').forEach(el => el.style.display = '');
+        document.getElementById('seccionBoton').style.visibility = 'visible';
 
-        // 3. Subir a Drive
-        await subirViaDrive(base64, filename);
+        setBtn('<span class="loader"></span> Enviando a Telegram...', true);
 
-        mostrarMensaje('✅ Guardado en Drive: ' + filename, 'exito');
+        // 5. Enviar a Telegram
+        const caption = `📋 *Autoevaluación VENTO 2026*\n🏢 ${agencia}\n👤 ${nombre}\n📅 ${fecha}\n🏆 Puntos obtenidos: *${puntos}/94*`;
+        const form = new FormData();
+        form.append('chat_id',  TELEGRAM_CHAT_ID);
+        form.append('document', pdfBlob, filename);
+        form.append('caption',  caption);
+        form.append('parse_mode', 'Markdown');
+
+        const resp = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendDocument`, {
+            method: 'POST',
+            body:   form
+        });
+
+        const result = await resp.json();
+        if (!result.ok) throw new Error(result.description || 'Error Telegram');
+
+        mostrarMensaje('✅ PDF enviado a Telegram: ' + filename, 'exito');
 
     } catch (err) {
-        console.error('Error Drive:', err);
-        // Fallback: descarga local
-        btn.style.visibility = 'visible';
-        setBtn('<span class="loader"></span> Descargando PDF...', true);
+        console.error(err);
+        // Restaurar UI antes del fallback
+        ['Evaluador','Evaluado'].forEach(rol => {
+            const img    = document.getElementById('imgFirma' + rol);
+            const canvas = document.getElementById('canvas' + rol);
+            if (img) img.remove();
+            if (canvas) canvas.style.display = 'block';
+        });
+        document.querySelectorAll('.btn-limpiar, .firma-hint').forEach(el => el.style.display = '');
+        document.getElementById('seccionBoton').style.visibility = 'visible';
+
+        // Descarga local como respaldo
         try {
             const opt = {
                 margin:      [8, 8, 8, 8],
@@ -405,13 +516,12 @@ async function guardarEnDrive() {
                 jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
             await html2pdf().set(opt).from(document.getElementById('contenidoPDF')).save();
-            mostrarMensaje('⬇️ PDF descargado localmente (revisar conexión a Drive).', 'info');
-        } catch(e) {
-            mostrarMensaje('❌ Error al generar PDF: ' + e.message, 'error');
+            mostrarMensaje('⬇️ PDF descargado localmente. Revisa el token de Telegram.', 'info');
+        } catch(e2) {
+            mostrarMensaje('❌ Error al generar PDF: ' + e2.message, 'error');
         }
     } finally {
-        btn.style.visibility = 'visible';
-        setBtn('💾 GUARDAR EN DRIVE', false);
+        setBtn('📤 GUARDAR Y ENVIAR', false);
     }
 }
 </script>
